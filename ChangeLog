@@ -1,1 +1,15 @@
+# ChangeLog
+All notable changes to this project will be documented in this file.
 
+## [safi] 2018-11-03
+### Added
+	- Adding project files.
+
+## [safi] 2018-11-05
+### Changed
+	- Trim data of Lund (remove unnecessary rows and columns) to be easier to read in C++
+
+## [safi] 2018-11-05
+### Implemented
+	- Implement hotCold function to draw a distribution of hottest and coldest day in Lund since 1961.
+	- Fit the distribution of hottest day using Gaussian distribution.
