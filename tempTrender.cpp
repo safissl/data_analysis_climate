@@ -28,7 +28,7 @@ void tempTrender::hotCold() {
   TH1D* histCold = new TH1D("histCold", "hist Cold; Day of the year; Entries", 366, 1, 366);
 
   // read the temperature and date from the data set of Lund
-  ifstream file("smhi-opendata_Lund.csv");
+  ifstream file(getFilePath());
   vector<Double_t> tempOfYear;
   vector<Int_t> dayOfYear;
   Int_t nYears = 54;
