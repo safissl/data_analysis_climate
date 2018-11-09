@@ -96,6 +96,9 @@ void tempTrender::hotCold() {
   histHot->Fit(funcHot);
   cout << "The mean is " << funcHot->GetParameter(1) << endl;
   cout << "Its uncertainty is " << funcHot->GetParError(1) << endl;
+
+  // Save the canvas as a picture
+  c1->SaveAs("hotCold.png");  
 }
 
 
