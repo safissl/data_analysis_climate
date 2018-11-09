@@ -234,3 +234,56 @@ void tempTrender::DayTemp(int monthToCalculate, int dayToCalculate){
   dayGaus->SetParameters(0.1,mean,50);
   tempday->Fit(dayGaus, "Q");*/
 }
+
+
+void tempTrender::tempPerDay() {
+  // create two histograms
+  TH2F* histPerDay = new TH2F("histPerDay", "Hist; Day of the year; Temperature", 366, 1, 366, 40, -10, 30);
+
+  // read the temperature and date from the data set of Lund
+  ifstream file(getFilePath());
+  vector<Double_t> tempOfDay;
+  Int_t year, month, day, helpInt;
+  Double_t temp;
+  Char_t dash,comma,colon;
+  string helpString;
+  Int_t yearF = 1961;
+  Int_t dayF = 01;
+  Int_t nDay = 1;
+
+    while(file >> year >> dash >> month >> dash >> day >> comma >> helpInt >> colon >> helpInt >> colon >> helpInt >> comma >> temp) {
+      if (year!=yearF){
+        nDay=day;
+        yearF = year;
+      }
+
+      if (day!=dayF){
+
+        Double_t sum = std::accumulate(tempOfDay.begin(), tempOfDay.end(), 0.0);
+        Double_t mean = sum / tempOfDay.size();
+        std::vector<Double_t> diff(tempOfDay.size());
+        std::transform(tempOfDay.begin(), tempOfDay.end(), diff.begin(), [mean](Double_t x) { return x - mean; });
+        Double_t sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
+        Double_t stdev = std::sqrt(sq_sum / tempOfDay.size());
+        cout << "In the year " << yearF << ", day "<< nDay << " the average " << mean << " the standard deviation " << stdev << endl;
+        histPerDay->Fill(nDay, mean);
+
+        nDay++;
+        dayF = day;
+        tempOfDay.clear();
+      }
+
+      tempOfDay.push_back(temp);
+    }
+  file.close();
+  // create canvas
+  TCanvas* c2 = new TCanvas("c2", "Temperature per day canvas", 900, 600);
+  c2->Divide(1,1);
+  c2->cd(1);
+  histPerDay->SetMarkerStyle(8);
+  histPerDay->SetMarkerSize(0.6);
+  histPerDay->Draw();
+
+  // Save the canvas as a picture
+  c2->SaveAs("tempPerDay.png");
+}
