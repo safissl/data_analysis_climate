@@ -183,7 +183,6 @@ void tempTrender::DayTemp(int monthToCalculate, int dayToCalculate){
   TH1D* tempday = new TH1D("Day Temp","Temperature ; Temperature; Entries",300,-20,40);
 
   ifstream file("smhi-opendata_Lund.csv");
-  Int_t nYears=54;
   Int_t helpint;
   Double_t temp;  
   Int_t day, month, year;
@@ -218,6 +217,8 @@ void tempTrender::DayTemp(int monthToCalculate, int dayToCalculate){
   double stdev = tempday->GetRMS();
 
   TCanvas* c4 = new TCanvas("c4", "Canvas for DayTemp", 900, 600);
+  c4->Divide(1,1);
+  c4->cd(1);
   tempday->SetFillColor(kRed);
   tempday->SetMarkerColor(kRed);
   tempday->SetMinimum(0);
@@ -226,6 +227,9 @@ void tempTrender::DayTemp(int monthToCalculate, int dayToCalculate){
   cout << "Mean temperature is " << mean << endl;
   cout << "The standard deviation from the mean value is " << stdev << endl;
 
+  // Save the canvas as a picture
+  c4->SaveAs("DayTemp.png");
+  
   /*TF1* dayGaus= new TF1("dayGaus","gaus",-20,40);
   dayGaus->SetParameters(0.1,mean,50);
   tempday->Fit(dayGaus, "Q");*/
