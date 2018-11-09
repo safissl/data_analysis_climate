@@ -175,3 +175,58 @@ void tempTrender::tempPerMonth() {
   // Save the canvas as a picture
   c3->SaveAs("tempPerMonth.png");
 }
+
+
+void tempTrender::DayTemp(int monthToCalculate, int dayToCalculate){
+
+  //Histogram for the temperatures of a given day of the year each year since 1961.
+  TH1D* tempday = new TH1D("Day Temp","Temperature ; Temperature; Entries",300,-20,40);
+
+  ifstream file("smhi-opendata_Lund.csv");
+  Int_t nYears=54;
+  Int_t helpint;
+  Double_t temp;  
+  Int_t day, month, year;
+  Char_t helpChar;
+  Int_t nY = 0;
+  Double_t tempvec[55];
+
+
+  //assigning names to everything in data
+  while(file >> year >> helpChar >> month >> helpChar >> day >> helpChar >> helpint >> helpChar >> helpint >> helpChar >> helpint >> helpChar >> temp){
+    if(month == monthToCalculate){
+      if(day == dayToCalculate){
+        Double_t sum_temps = 0;
+        Int_t n=0;
+        while(day == dayToCalculate){
+          sum_temps+=temp;
+          n++;
+          file >> year >> helpChar >> month >> helpChar >> day >> helpChar >> helpint >> helpChar >> helpint >> helpChar >> helpint >> helpChar >> temp;
+        }
+
+        tempvec[nY]=sum_temps/n;
+        tempday->Fill(tempvec[nY]);
+        nY++;
+      }
+
+    }
+
+  }
+  
+
+  double mean = tempday->GetMean(); //The mean of the distribution
+  double stdev = tempday->GetRMS();
+
+  TCanvas* c4 = new TCanvas("c4", "Canvas for DayTemp", 900, 600);
+  tempday->SetFillColor(kRed);
+  tempday->SetMarkerColor(kRed);
+  tempday->SetMinimum(0);
+
+  tempday->Draw();
+  cout << "Mean temperature is " << mean << endl;
+  cout << "The standard deviation from the mean value is " << stdev << endl;
+
+  /*TF1* dayGaus= new TF1("dayGaus","gaus",-20,40);
+  dayGaus->SetParameters(0.1,mean,50);
+  tempday->Fit(dayGaus, "Q");*/
+}
