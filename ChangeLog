@@ -17,3 +17,9 @@ All notable changes to this project will be documented in this file.
 ## [safi] 2018-11-09
 ## Implemented
    - tempPerMonth: this function can calculate the (mean, max, min) temperature each month. On other word, it calculates the average, hottest, coldest day of each month.
+
+##[Philip] 2018-11-09
+## Implemented
+   - DayTemp: This function will take two parameters, monthToCalculate and dayToCalculate, and will put all the measured temperatures
+   on that day every year since 1961 in a histogram and show the histogram. If there are multiple readins on a given day, the readings
+   are averaged with no weight.
