@@ -73,7 +73,9 @@ void tempTrender::hotCold() {
   file.close();
 
   // create canvas
-  //  TCanvas* c1 = new TCanvas("c1", "Hottest and coldest day canvas", 900, 600);
+  TCanvas* c1 = new TCanvas("c1", "Hottest and coldest day canvas", 900, 600);
+  c1->Divide(1,1);
+  c1->cd(1);
   TLegend *leg = new TLegend(0.65, 0.75, 0.92, 0.92, "", "NDC");
   leg->SetFillStyle(0); //Hollow fill (transparent)
   leg->SetBorderSize(0); //Get rid of the border
