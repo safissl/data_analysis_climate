@@ -5,9 +5,9 @@ This the Workplan for group F.
    - Philip: tempOnDay, the first one.
    - Safi: hotCold. (Done)
    - Dalia: tempPerYear.
-   - Taichi:
+   - Taichi: tempPerDay
 ## Choosing a new function:
-
+   - tempPerMonth: this function can calculate the (mean, max, min) temperature each month. On other word, it calculates the average, hottest, coldest day of each month.
 
 # Starting a project on overleaf for report:
 ## Safi's suggestion:

@@ -4,11 +4,13 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <numeric>
 using namespace std;
 
 // ROOT library obejcts
 #include <TF1.h> // 1d function class
 #include <TH1.h> // 1d histogram classes
+#include <TH2.h> // 2d histogram classes
 #include <TStyle.h>  // style object
 #include <TMath.h>   // math functions
 #include <TCanvas.h> // canvas object
@@ -92,14 +94,79 @@ void tempTrender::hotCold() {
   histHot->Fit(funcHot);
   cout << "The mean is " << funcHot->GetParameter(1) << endl;
   cout << "Its uncertainty is " << funcHot->GetParError(1) << endl;
-
-  /*
-  TF1* funcCold = new TF1("Gaussian", "gaus", 1, 366, 3);
-  funcCold->SetParameters(1, 1, 1); //Starting values for fitting
-  //  histCold->Fit(funcCold, "Q0R");
-  histCold->Fit(funcCold);
-  cout << "The mean is " << funcCold->GetParameter(1) << endl;
-  cout << "Its uncertainty is " << funcCold->GetParError(1) << endl;
-  */
 }
 
+
+void tempTrender::tempPerMonth() {
+  // create two histograms
+  TH2F* histPerMonth = new TH2F("histPerMonth", "Hist; Month of the year; Temperature", 12, 1, 13, 40, -10, 30);
+  TH2F* histPerMonthHottest = new TH2F("histPerMonthHottest", "Hist; Month of the year; Temperature", 12, 1, 13, 40, -10, 30);
+  TH2F* histPerMonthColdest = new TH2F("histPerMonthColdest", "Hist; Month of the year; Temperature", 12, 1, 13, 40, -10, 30);
+
+  // read the temperature and date from the data set of Lund
+  ifstream file(getFilePath());
+  vector<Double_t> tempOfMonth;
+  Int_t year, month, day, helpInt;
+  Double_t temp;
+  Char_t dash,comma,colon;
+  string helpString;
+  Int_t yearF = 1961;
+  Int_t monthF = 01;
+  Int_t nMonth = 1;
+
+    while(file >> year >> dash >> month >> dash >> day >> comma >> helpInt >> colon >> helpInt >> colon >> helpInt >> comma >> temp) {
+      if (year!=yearF){
+        nMonth=month;
+        yearF = year;
+      }
+
+      if (month!=monthF){
+
+        Double_t sum = std::accumulate(tempOfMonth.begin(), tempOfMonth.end(), 0.0);
+        Double_t mean = sum / tempOfMonth.size();
+        Double_t hottest = *max_element(tempOfMonth.begin(),tempOfMonth.end());
+        Double_t coldest = *min_element(tempOfMonth.begin(),tempOfMonth.end());
+
+        cout << "In the year " << yearF << ", month "<< nMonth << " the average " << mean << " hottest " << hottest << endl;
+        histPerMonth->Fill(nMonth, mean);
+        histPerMonthHottest->Fill(nMonth, hottest);
+        histPerMonthColdest->Fill(nMonth, coldest);
+
+        nMonth++;
+        monthF = month;
+        tempOfMonth.clear();
+      }
+
+      tempOfMonth.push_back(temp);
+    }
+  file.close();
+  // create canvas
+  TCanvas* c3 = new TCanvas("c3", "Temperature per month canvas", 900, 600);
+  c3->Divide(1,1);
+  c3->cd(1);
+  histPerMonth->SetMarkerStyle(8);
+  histPerMonth->SetMarkerSize(0.6);
+  histPerMonth->Draw();
+
+  histPerMonthHottest->SetMarkerStyle(3);
+  histPerMonthHottest->SetMarkerColor(kRed);
+  histPerMonthHottest->Draw("SAME");
+
+  histPerMonthColdest->SetMarkerStyle(4);
+  histPerMonthColdest->SetMarkerColor(kBlue);
+  histPerMonthColdest->Draw("SAME");
+
+  TLegend *leg = new TLegend(0.5, 0.75, 0.15, 0.92, "", "NDC");
+  leg->SetFillStyle(0);
+  leg->SetBorderSize(0);
+  leg->AddEntry(histPerMonth, "Average temp", "f");
+  leg->AddEntry(histPerMonthHottest, "Maximum temp", "f");
+  leg->AddEntry(histPerMonthColdest, "Minimum temp", "f");
+  histPerMonth->SetFillColor( kBlack);
+  histPerMonthHottest->SetFillColor( kRed);
+  histPerMonthColdest->SetFillColor( kBlue);
+  leg->Draw();
+
+  // Save the canvas as a picture
+  c3->SaveAs("tempPerMonth.png");
+}

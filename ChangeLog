@@ -13,3 +13,7 @@ All notable changes to this project will be documented in this file.
 ### Implemented
 	- Implement hotCold function to draw a distribution of hottest and coldest day in Lund since 1961.
 	- Fit the distribution of hottest day using Gaussian distribution.
+
+## [safi] 2018-11-09
+## Implemented
+   - tempPerMonth: this function can calculate the (mean, max, min) temperature each month. On other word, it calculates the average, hottest, coldest day of each month.
