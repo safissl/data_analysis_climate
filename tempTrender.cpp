@@ -287,3 +287,67 @@ void tempTrender::tempPerDay() {
   // Save the canvas as a picture
   c2->SaveAs("tempPerDay.png");
 }
+
+void tempTrender::tempPerYear(){
+
+  //Creating histogram of avg temperature per year
+  TH2D* YearHist = new TH2D("YearHist", "Average temperature per year", 54, 1961, 2015,60,5,11); //number of years
+  //Create fit
+
+  //Reading temperatures from file
+  ifstream file(getFilePath());
+
+
+  Int_t year, month, day, hour, minute, second;
+  Char_t hyphen, semicolon, colon;
+  Double_t temperature;
+  Double_t a = 0;
+  Double_t b=0;
+  Double_t i = 0;
+  Double_t day_now;
+  Double_t year_temp[54];
+  Int_t n_year = 0;
+  Int_t year_now=1961;
+  vector<Double_t> vec_year;
+  while(file >> year >> hyphen >> month >> hyphen >> day >> semicolon >> hour >> colon >> minute >> colon >> second >> semicolon >> temperature)
+  {
+    if(year==year_now){
+
+      day_now = day;
+      Double_t day_temp = a + temperature;
+      Int_t nDay = b+1;
+      Double_t avg_temp_day=0;
+      while(file >> year >> hyphen >> month >> hyphen >> day >> semicolon >> hour >> colon >> minute >> colon >> second >> semicolon >> temperature){
+        
+        if(day == day_now){
+          day_temp+=temperature;
+          nDay++;
+        }
+        else{
+          avg_temp_day = day_temp/nDay;
+          vec_year.push_back(avg_temp_day);
+          a=temperature;
+          b=1;
+          break;
+        }
+      }
+    }
+    if(year==year_now+1){
+      Double_t sum = 0;
+      for(Int_t t =0; t < vec_year.size();t++){
+        sum+=vec_year.at(t);
+      }
+      year_temp[n_year]=sum/vec_year.size();
+      YearHist->Fill(year,year_temp[n_year]);
+      n_year++;
+      year_now++;      
+      vec_year.clear();
+    }
+  } 
+  TCanvas* c5 = new TCanvas("c5","Canvas for tempPerYear",900,600);
+  YearHist->SetMarkerStyle(8);
+  YearHist->Draw();
+
+YearHist->Fit("pol1");
+
+}
