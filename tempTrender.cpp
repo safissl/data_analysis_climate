@@ -303,7 +303,6 @@ void tempTrender::tempPerYear(){
   Double_t temperature;
   Double_t a = 0;
   Double_t b=0;
-  Double_t i = 0;
   Double_t day_now;
   Double_t year_temp[54];
   Int_t n_year = 0;
@@ -350,4 +349,6 @@ void tempTrender::tempPerYear(){
 
 YearHist->Fit("pol1");
 
+  // Save the canvas as a picture
+  c5->SaveAs("tempPerYear.png");
 }
