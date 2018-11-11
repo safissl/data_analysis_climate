@@ -333,7 +333,7 @@ void tempTrender::tempPerYear(){
     }
     if(year==year_now+1){
       Double_t sum = 0;
-      for(Int_t t =0; t < vec_year.size();t++){
+      for(unsigned int t =0; t < vec_year.size();t++){
         sum+=vec_year.at(t);
       }
       year_temp[n_year]=sum/vec_year.size();
